@@ -1,0 +1,71 @@
+---
+- name: Provision HTHS students into Active Directory
+  hosts: fedora_dc
+  gather_facts: false
+
+  tasks:
+    - name: Validate required inputs
+      assert:
+        that:
+          - students is defined
+          - (students | length) > 0
+          - client_base_dn is defined
+        fail_msg: "Missing required vars: students (list) and client_base_dn (string)."
+
+    - name: Provision each student
+      loop: "{{ students }}"
+      loop_control:
+        label: "{{ item.email }}"
+      vars:
+        year: "{{ item.year }}"
+        target_ou: "OU={{ year }},OU=Students,{{ client_base_dn }}"
+        sam: "{{ (item.first_name[0] ~ item.last_name) | lower | regex_replace('[^a-z0-9]', '') ~ '.' ~ year }}"
+      ansible.windows.win_powershell:
+        script: |
+          param(
+            [string]$FirstName,
+            [string]$LastName,
+            [string]$Email,
+            [string]$Sam,
+            [string]$OuDn,
+            [bool]$DryRun
+          )
+
+          Import-Module ActiveDirectory
+
+          $displayName = "$FirstName $LastName"
+          $existing = Get-ADUser -Filter "SamAccountName -eq '$Sam'" -ErrorAction SilentlyContinue
+
+          if ($existing) {
+            Write-Output "EXISTS: $Sam"
+            return
+          }
+
+          if ($DryRun) {
+            Write-Output "DRYRUN: Would create $Sam in $OuDn"
+            return
+          }
+
+          $tempPw = ConvertTo-SecureString ("HTHS-" + (Get-Random -Minimum 100000 -Maximum 999999) + "!") -AsPlainText -Force
+
+          New-ADUser `
+            -Name $displayName `
+            -GivenName $FirstName `
+            -Surname $LastName `
+            -DisplayName $displayName `
+            -SamAccountName $Sam `
+            -UserPrincipalName $Email `
+            -EmailAddress $Email `
+            -Path $OuDn `
+            -AccountPassword $tempPw `
+            -Enabled $true `
+            -ChangePasswordAtLogon $true
+
+          Write-Output "CREATED: $Sam"
+        parameters:
+          FirstName: "{{ item.first_name }}"
+          LastName: "{{ item.last_name }}"
+          Email: "{{ item.email }}"
+          Sam: "{{ sam }}"
+          OuDn: "{{ target_ou }}"
+          DryRun: "{{ dry_run | default(true) | bool }}"
