@@ -1,1 +1,10 @@
+# Domain
+ad_domain: fedora.solutions
+base_dn: DC=fedora,DC=solutions
+
+# Client OU
+client_ou: OU=HolyTrinityHS,OU=Clients,DC=fedora,DC=solutions
+students_ou: OU=Students,OU=HolyTrinityHS,OU=Clients,DC=fedora,DC=solutions
+
+# Student input (populated later by n8n / JSON)
 students: []
