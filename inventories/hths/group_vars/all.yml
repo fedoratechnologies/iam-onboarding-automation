@@ -1,0 +1,9 @@
+client_code: hths
+
+ad:
+  base_dn: "DC=fedora,DC=solutions"
+  client_ou: "OU=HTHS,OU=Clients,DC=fedora,DC=solutions"
+  students_ou: "OU=Students,OU=Users,OU=HTHS,OU=Clients,DC=fedora,DC=solutions"
+
+keycloak:
+  realm: hths
