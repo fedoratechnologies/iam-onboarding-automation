@@ -1,0 +1,8 @@
+- name: Provision HTHS students
+  hosts: localhost
+  gather_facts: false
+
+  tasks:
+    - name: Show incoming students (dry run)
+      debug:
+        var: students
