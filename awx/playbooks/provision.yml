@@ -29,6 +29,19 @@
       loop_control:
         label: "{{ item.username }}"
 
+
+    - name: Ensure grade security groups exist
+      microsoft.ad.group:
+        name: "{{ item.value }}"
+        scope: global
+        category: security
+        path: "{{ groups_ou }}"
+        state: present
+      loop: "{{ grade_groups | dict2items }}"
+      loop_control:
+        label: "{{ item.value }}"
+    
+
     - name: Add students to grade security group
       microsoft.ad.group:
         name: "{{ grade_groups[item.cohort] }}"
