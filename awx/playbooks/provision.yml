@@ -25,13 +25,14 @@
         password_expired: true
         password_never_expires: false
 
-        # ✅ Store school email on AD user
+        # ✅ Store school email in AD (mail attribute)
         email: "{{ item.email }}"
 
-        # ✅ Optional but recommended for future SSO / email tooling
+        # ✅ Correct way to add proxyAddresses (module-safe)
         attributes:
-          proxyAddresses:
-            - "SMTP:{{ item.email }}"
+          add:
+            proxyAddresses:
+              - "SMTP:{{ item.email }}"
 
         state: present
       loop: "{{ students }}"
