@@ -1,18 +1,21 @@
-# Domain
+# AD domain
 ad_domain: fedora.solutions
-base_dn: DC=fedora,DC=solutions
 
-# Client OU
-client_ou: OU=HolyTrinityHS,OU=Clients,DC=fedora,DC=solutions
+# Where student user accounts live
 students_ou: OU=Students,OU=HolyTrinityHS,OU=Clients,DC=fedora,DC=solutions
+
+# Where grade security groups live
 groups_ou: OU=Groups,OU=HolyTrinityHS,OU=Clients,DC=fedora,DC=solutions
 
-# Cohort → Grade group mapping
+# Grade → Security Group mapping
 grade_groups:
-  "2026": "SG_Grade-9"
-  "2027": "SG_Grade-10"
-  "2028": "SG_Grade-11"
-  "2029": "SG_Grade-12"
-  
-# Student input (populated later by n8n / JSON)
+  "2026": SG_Grade-9
+  "2027": SG_Grade-10
+  "2028": SG_Grade-11
+  "2029": SG_Grade-12
+
+# Students will be injected by AWX / n8n
 students: []
+
+# Temporary password for new students
+temp_password: "TempPassw0rd!"
