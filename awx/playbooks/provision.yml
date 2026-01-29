@@ -1,9 +1,10 @@
+---
 - name: Provision HTHS students
   hosts: dc01.fedora.solutions
   gather_facts: false
 
   vars_files:
-    - ../../vars/hths.yml
+    - ../vars/hths.yml
 
   tasks:
     - name: Create HTHS student accounts in Active Directory
@@ -19,16 +20,8 @@
         enabled: true
         password_expired: true
         password_never_expires: false
-        state: present
-      loop: "{{ students }}"
-      loop_control:
-        label: "{{ item.username }}"
-
-    - name: Add students to grade security group
-      microsoft.ad.group:
-        name: "{{ grade_groups[item.cohort] }}"
-        members:
-          - "{{ item.username[:20] }}"
+        groups:
+          - "{{ grade_groups[item.cohort] }}"
         state: present
       loop: "{{ students }}"
       loop_control:
