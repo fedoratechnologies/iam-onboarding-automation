@@ -4,9 +4,12 @@
   gather_facts: false
 
   vars_files:
-    - ../vars/hths.yml
+    - awx/vars/hths.yml
 
   tasks:
+    - name: Debug loaded domain
+      ansible.builtin.debug:
+        var: ad_domain
     - name: Create HTHS student accounts in Active Directory
       microsoft.ad.user:
         name: "{{ item.first_name }} {{ item.last_name }}"
