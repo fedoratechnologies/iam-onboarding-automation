@@ -5,32 +5,31 @@
   vars_files:
     - ../../vars/hths.yml
 
-tasks:
-  - name: Create HTHS student accounts in Active Directory
-    microsoft.ad.user:
-      name: "{{ item.first_name }} {{ item.last_name }}"
-      sam_account_name: "{{ item.username[:20] }}"
-      upn: "{{ item.username }}@{{ ad_domain }}"
-      firstname: "{{ item.first_name }}"
-      lastname: "{{ item.last_name }}"
-      display_name: "{{ item.first_name }} {{ item.last_name }}"
-      path: "{{ students_ou }}"
-      password: "{{ temp_password }}"
-      enabled: true
-      password_expired: true
-      password_never_expires: false
-      state: present
-    loop: "{{ students }}"
-    loop_control:
-      label: "{{ item.username }}"
+  tasks:
+    - name: Create HTHS student accounts in Active Directory
+      microsoft.ad.user:
+        name: "{{ item.first_name }} {{ item.last_name }}"
+        sam_account_name: "{{ item.username[:20] }}"
+        upn: "{{ item.username }}@{{ ad_domain }}"
+        firstname: "{{ item.first_name }}"
+        lastname: "{{ item.last_name }}"
+        display_name: "{{ item.first_name }} {{ item.last_name }}"
+        path: "{{ students_ou }}"
+        password: "{{ temp_password }}"
+        enabled: true
+        password_expired: true
+        password_never_expires: false
+        state: present
+      loop: "{{ students }}"
+      loop_control:
+        label: "{{ item.username }}"
 
-  - name: Add students to grade security group
-    microsoft.ad.group:
-      name: "{{ grade_groups[item.cohort] }}"
-      members:
-        - "{{ item.username[:20] }}"
-      state: present
-    loop: "{{ students }}"
-    loop_control:
-      label: "{{ item.username }}"
-
+    - name: Add students to grade security group
+      microsoft.ad.group:
+        name: "{{ grade_groups[item.cohort] }}"
+        members:
+          - "{{ item.username[:20] }}"
+        state: present
+      loop: "{{ students }}"
+      loop_control:
+        label: "{{ item.username }}"
