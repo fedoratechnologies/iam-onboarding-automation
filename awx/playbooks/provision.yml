@@ -19,3 +19,13 @@
   loop: "{{ students }}"
   loop_control:
     label: "{{ item.username }}"
+    
+- name: Add students to grade security group
+  microsoft.ad.group:
+    name: "{{ grade_groups[item.cohort] }}"
+    members:
+      - "{{ item.username }}"
+    state: present
+  loop: "{{ students }}"
+  loop_control:
+    label: "{{ item.username }}"
