@@ -7,6 +7,11 @@
     - hths.yml
 
   tasks:
+    - name: Fail if no students were provided
+      ansible.builtin.fail:
+        msg: "No students provided via extra_vars"
+      when: students is not defined or students | length == 0
+  
     - name: Debug loaded domain
       ansible.builtin.debug:
         var: ad_domain
