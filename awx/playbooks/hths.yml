@@ -5,6 +5,7 @@ base_dn: DC=fedora,DC=solutions
 # Client OU
 client_ou: OU=HolyTrinityHS,OU=Clients,DC=fedora,DC=solutions
 students_ou: OU=Students,OU=HolyTrinityHS,OU=Clients,DC=fedora,DC=solutions
+groups_ou: OU=Groups,OU=HolyTrinityHS,OU=Clients,DC=fedora,DC=solutions
 
 # Cohort → Grade group mapping
 grade_groups:
