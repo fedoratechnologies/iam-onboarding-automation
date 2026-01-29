@@ -24,6 +24,15 @@
         enabled: true
         password_expired: true
         password_never_expires: false
+
+        # ✅ Store school email on AD user
+        email: "{{ item.email }}"
+
+        # ✅ Optional but recommended for future SSO / email tooling
+        attributes:
+          proxyAddresses:
+            - "SMTP:{{ item.email }}"
+
         state: present
       loop: "{{ students }}"
       loop_control:
