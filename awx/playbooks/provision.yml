@@ -1,5 +1,5 @@
 - name: Provision HTHS students
-  hosts: localhost
+  hosts: dc01.fedora.solutions
   gather_facts: false
 
   vars_files:
