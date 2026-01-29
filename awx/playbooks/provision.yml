@@ -34,8 +34,9 @@
         name: "{{ grade_groups[item.cohort] }}"
         members:
           add:
-            - "{{ item.username[:20] }}"
+             - "{{ item.username[:20] }}"
         state: present
+      
       loop: "{{ students }}"
       loop_control:
         label: "{{ item.username }}"
