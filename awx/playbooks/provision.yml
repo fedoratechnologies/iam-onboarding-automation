@@ -28,7 +28,7 @@
       microsoft.ad.group:
         name: "{{ grade_groups[item.cohort] }}"
         members:
-          - "{{ item.username }}"
+          - "{{ item.username[:20] }}"
         state: present
       loop: "{{ students }}"
       loop_control:
