@@ -2,30 +2,31 @@
   hosts: localhost
   gather_facts: false
 
-- name: Create HTHS student accounts in Active Directory
-  microsoft.ad.user:
-    name: "{{ item.first_name }} {{ item.last_name }}"
-    sam_account_name: "{{ item.username[:20] }}"
-    user_principal_name: "{{ item.username }}@{{ ad_domain }}"
-    given_name: "{{ item.first_name }}"
-    surname: "{{ item.last_name }}"
-    display_name: "{{ item.first_name }} {{ item.last_name }}"
-    path: "OU={{ item.cohort }},{{ students_ou }}"
-    state: present
-    enabled: true
-    password: "{{ temp_password }}"
-    password_never_expires: false
-    change_password_at_logon: true
-  loop: "{{ students }}"
-  loop_control:
-    label: "{{ item.username }}"
-    
-- name: Add students to grade security group
-  microsoft.ad.group:
-    name: "{{ grade_groups[item.cohort] }}"
-    members:
-      - "{{ item.username }}"
-    state: present
-  loop: "{{ students }}"
-  loop_control:
-    label: "{{ item.username }}"
+  tasks:
+    - name: Create HTHS student accounts in Active Directory
+      microsoft.ad.user:
+        name: "{{ item.first_name }} {{ item.last_name }}"
+        sam_account_name: "{{ item.username[:20] }}"
+        user_principal_name: "{{ item.username }}@{{ ad_domain }}"
+        given_name: "{{ item.first_name }}"
+        surname: "{{ item.last_name }}"
+        display_name: "{{ item.first_name }} {{ item.last_name }}"
+        path: "OU={{ item.cohort }},{{ students_ou }}"
+        state: present
+        enabled: true
+        password: "{{ temp_password }}"
+        password_never_expires: false
+        change_password_at_logon: true
+      loop: "{{ students }}"
+      loop_control:
+        label: "{{ item.username }}"
+
+    - name: Add students to grade security group
+      microsoft.ad.group:
+        name: "{{ grade_groups[item.cohort] }}"
+        members:
+          - "{{ item.username }}"
+        state: present
+      loop: "{{ students }}"
+      loop_control:
+        label: "{{ item.username }}"
