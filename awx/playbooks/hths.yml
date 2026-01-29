@@ -14,8 +14,5 @@ grade_groups:
   "2028": SG_Grade-11
   "2029": SG_Grade-12
 
-# Students will be injected by AWX / n8n
-students: []
-
 # Temporary password for new students
 temp_password: "TempPassw0rd!"
