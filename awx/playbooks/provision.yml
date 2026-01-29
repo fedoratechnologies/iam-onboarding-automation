@@ -4,7 +4,7 @@
   gather_facts: false
 
   vars_files:
-    - awx/vars/hths.yml
+    - vars/hths.yml
 
   tasks:
     - name: Show hths.yml contents
