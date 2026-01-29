@@ -3,7 +3,7 @@
   gather_facts: false
 
   vars_files:
-    - ../vars/hths.yml
+    - ../../vars/hths.yml
 
   tasks:
     - name: Create HTHS student accounts in Active Directory
