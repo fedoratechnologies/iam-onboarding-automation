@@ -6,39 +6,33 @@
   vars_files:
     - hths.yml
 
-  tasks:
-    - name: Fail if no students were provided
-      ansible.builtin.fail:
-        msg: "No students provided via extra_vars"
-      when: students is not defined or students | length == 0
-  
-    - name: Debug loaded domain
-      ansible.builtin.debug:
-        var: ad_domain
+  pre_tasks:
+    - name: Assert students were passed in via extra_vars
+      ansible.builtin.assert:
+        that:
+          - students is defined
+          - students | length > 0
+        fail_msg: "No students provided via extra_vars"
 
+    - name: Debug incoming students (temporary – remove later)
+      ansible.builtin.debug:
+        var: students
+
+  tasks:
     - name: Create HTHS student accounts in Active Directory
       microsoft.ad.user:
         name: "{{ item.first_name }} {{ item.last_name }}"
-        sam_account_name: "{{ item.username[:20] }}"
-        upn: "{{ item.username }}@{{ ad_domain }}"
+        sam_account_name: "{{ item.username }}"
+        user_principal_name: "{{ item.username }}@{{ ad_domain }}"
         firstname: "{{ item.first_name }}"
         lastname: "{{ item.last_name }}"
         display_name: "{{ item.first_name }} {{ item.last_name }}"
+        email: "{{ item.email }}"
         path: "{{ students_ou }}"
         password: "{{ temp_password }}"
         enabled: true
         password_expired: true
         password_never_expires: false
-
-        # ✅ Store school email in AD (mail attribute)
-        email: "{{ item.email }}"
-
-        # ✅ Correct way to add proxyAddresses (module-safe)
-        attributes:
-          add:
-            proxyAddresses:
-              - "SMTP:{{ item.email }}"
-
         state: present
       loop: "{{ students }}"
       loop_control:
@@ -46,20 +40,21 @@
 
     - name: Ensure grade security groups exist
       microsoft.ad.group:
-        name: "{{ item }}"
-        path: "{{ groups_ou }}"
+        name: "{{ item.value }}"
         scope: global
         category: security
+        path: "OU=Groups,OU=HolyTrinityHS,OU=Clients,DC=fedora,DC=solutions"
         state: present
-      loop: "{{ grade_groups.values() | unique }}"
+      loop: "{{ grade_groups | dict2items }}"
+      loop_control:
+        label: "{{ item.value }}"
 
     - name: Add students to grade security group
       microsoft.ad.group:
         name: "{{ grade_groups[item.cohort] }}"
-        path: "{{ groups_ou }}"
         members:
           add:
-            - "{{ item.username[:20] }}"
+            - "{{ item.username }}"
         state: present
       loop: "{{ students }}"
       loop_control:
