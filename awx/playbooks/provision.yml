@@ -7,9 +7,6 @@
     - vars/hths.yml
 
   tasks:
-    - name: Show hths.yml contents
-      ansible.builtin.command: cat awx/vars/hths.yml
-  
     - name: Debug loaded domain
       ansible.builtin.debug:
         var: ad_domain
