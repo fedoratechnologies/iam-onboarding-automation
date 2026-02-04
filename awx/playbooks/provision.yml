@@ -13,10 +13,12 @@
           - students is defined
           - students | length > 0
         fail_msg: "No students provided via extra_vars"
+      tags: [always]
 
     - name: Debug incoming students (temporary – remove later)
       ansible.builtin.debug:
         var: students
+      tags: [always]
 
   tasks:
     - name: Create HTHS student accounts in Active Directory
@@ -37,6 +39,7 @@
       loop: "{{ students }}"
       loop_control:
         label: "{{ item.username }}"
+      tags: [users]
 
     - name: Ensure grade security groups exist
       microsoft.ad.group:
@@ -48,6 +51,7 @@
       loop: "{{ grade_groups | dict2items }}"
       loop_control:
         label: "{{ item.value }}"
+      tags: [groups]
 
     - name: Add students to grade security group
       microsoft.ad.group:
@@ -60,3 +64,4 @@
       loop: "{{ students }}"
       loop_control:
         label: "{{ item.username }}"
+      tags: [groups]
