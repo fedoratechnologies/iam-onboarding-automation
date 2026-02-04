@@ -52,6 +52,7 @@
     - name: Add students to grade security group
       microsoft.ad.group:
         name: "{{ grade_groups[item.cohort] }}"
+        path: "OU=Groups,OU=HolyTrinityHS,OU=Clients,DC=fedora,DC=solutions"
         members:
           add:
             - "{{ item.username }}"
